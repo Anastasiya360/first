@@ -18,7 +18,7 @@ public class Picture implements Serializable {
     private Integer id;
 
     @Column(name = "goods_id")
-    private Integer goods_id;
+    private Integer goodsId;
 
     @Column(name = "picture")
     private String picture;

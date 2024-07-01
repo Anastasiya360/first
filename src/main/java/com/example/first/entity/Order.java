@@ -19,10 +19,10 @@ public class Order implements Serializable {
     private Integer id;
 
     @Column(name = "users_id")
-    private Integer user_id;
+    private Integer userId;
 
     @Column(name = "order_date")
-    private LocalDate order_date;
+    private LocalDate orderDate;
 
     @Column(name = "status")
     private String status;

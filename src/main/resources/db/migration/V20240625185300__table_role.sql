@@ -1,4 +1,4 @@
-create schema shop;
+
 create table shop.role
 (
     id         serial

@@ -21,10 +21,10 @@ public class Good implements Serializable {
     private String name;
 
     @Column(name = "goods_type_id")
-    private Integer goods_type_id;
+    private Integer goodsTypeId;
 
     @Column(name = "unit_price")
-    private double unit_price;
+    private Double unitPrice;
 
     @Column(name = "description")
     private String description;

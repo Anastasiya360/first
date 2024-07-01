@@ -12,16 +12,16 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(schema = "shop", name = "reviews")
-public class Reviews implements Serializable {
+public class Review implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "users_id")
-    private Integer users_id;
+    private Integer usersId;
 
     @Column(name = "goods_id")
-    private Integer goods_id;
+    private Integer goodsId;
 
     @Column(name = "description")
     private String description;

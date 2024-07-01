@@ -12,7 +12,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(schema = "shop", name = "types_of_goods")
-
 public class Type implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
