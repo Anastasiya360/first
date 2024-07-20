@@ -1,7 +1,7 @@
 package com.example.first.service;
 
 import com.example.first.entity.Good;
-import com.example.first.repository.GoodRepository;
+import com.example.first.entity.Type;
 import com.example.first.repository.TypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,19 +10,16 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class GoodService {
-    private GoodRepository goodRepository;
+public class TypeService {
     private TypeRepository typeRepository;
 
     @Autowired
-    public GoodService(GoodRepository goodRepository, TypeRepository typeRepository) {
-        this.goodRepository = goodRepository;
+    public TypeService(TypeRepository typeRepository) {
         this.typeRepository = typeRepository;
     }
 
-
     public ResponseEntity<?> existById(Integer id) {
-        if (!goodRepository.existsById(id)) {
+        if (!typeRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
         return null;
@@ -33,21 +30,15 @@ public class GoodService {
         if (responseEntity != null) {
             return responseEntity;
         }
-        goodRepository.deleteById(id);
+        typeRepository.deleteById(id);
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity<?> create(Good good) {
-        if (good.getName() == null) {
+    public ResponseEntity<?> create(Type type) {
+        if (type.getName() == null) {
             return ResponseEntity.badRequest().body("name не передан");
         }
-        if (!typeRepository.existsById(good.getGoodsTypeId())) {
-            return ResponseEntity.badRequest().body("goodsTypeId не найден");
-        }
-        if (good.getUnitPrice() == null) {
-            return ResponseEntity.badRequest().body("unitPrice не передан");
-        }
-        return ResponseEntity.ok(goodRepository.save(good));
+        return ResponseEntity.ok(typeRepository.save(type));
     }
 
     public ResponseEntity<?> getById(Integer id) {
@@ -55,21 +46,18 @@ public class GoodService {
         if (responseEntity != null) {
             return responseEntity;
         }
-        return ResponseEntity.ok(goodRepository.findById(id));
+        return ResponseEntity.ok(typeRepository.findById(id));
     }
 
     public ResponseEntity<?> getAll() {
-        return ResponseEntity.ok(goodRepository.findAll());
+        return ResponseEntity.ok(typeRepository.findAll());
     }
 
-    public ResponseEntity<?> put(Good good) {
-        if (!goodRepository.existsById(good.getId())) {
-            return ResponseEntity.badRequest().body("goodId не найден");
-        }
-        if (!typeRepository.existsById(good.getGoodsTypeId())) {
+    public ResponseEntity<?> put(Type type) {
+        if (!typeRepository.existsById(type.getId())) {
             return ResponseEntity.badRequest().body("typeId не найден");
+        } else {
+            return ResponseEntity.ok(typeRepository.save(type));
         }
-        return ResponseEntity.ok(goodRepository.save(good));
     }
 }
-

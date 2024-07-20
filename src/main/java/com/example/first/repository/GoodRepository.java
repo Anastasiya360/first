@@ -10,6 +10,4 @@ import java.util.List;
 
 @Repository
 public interface GoodRepository extends JpaRepository<Good, Integer> {
-    @Query(nativeQuery = true, value = "select name from shop.goods")
-    List <String> findAllNames();
 }
