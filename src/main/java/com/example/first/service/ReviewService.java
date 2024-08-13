@@ -40,12 +40,30 @@ public class ReviewService {
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity<?> create(Review review) {
+    public ResponseEntity<?> checkParam(Review review) {
         if (!goodRepository.existsById(review.getGoodsId())) {
-            return ResponseEntity.badRequest().body("goods_id не найден");
+            return ResponseEntity.badRequest().body("good не найден");
         }
         if (!userRepository.existsById(review.getUsersId())) {
-            return ResponseEntity.badRequest().body("users_id не найден");
+            return ResponseEntity.badRequest().body("user не найден");
+        }
+        if (review.getGoodsId() == null) {
+            return ResponseEntity.badRequest().body("good не передан");
+        }
+        if (review.getUsersId() == null) {
+            return ResponseEntity.badRequest().body("user не передан");
+        }
+        return null;
+    }
+
+    public ResponseEntity<?> create(Review review) {
+        review.setId(null);
+        ResponseEntity<?> responseEntity = checkParam(review);
+        if (responseEntity != null) {
+            return responseEntity;
+        }
+        if (reviewRepository.existsByUsersId(review.getUsersId()) && reviewRepository.existsByGoodsId(review.getGoodsId())) {
+            return ResponseEntity.badRequest().body("user уже оставлял отзыв на товар");
         }
         return ResponseEntity.ok(reviewRepository.save(review));
     }
@@ -58,19 +76,24 @@ public class ReviewService {
         return ResponseEntity.ok(reviewRepository.findById(id));
     }
 
+    public ResponseEntity<?> findReviewByGoodId(Integer id) {
+        if (reviewRepository.findReviewByGoodId(id) == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(reviewRepository.findReviewByGoodId(id));
+    }
+
     public ResponseEntity<?> getAll() {
         return ResponseEntity.ok(reviewRepository.findAll());
     }
 
     public ResponseEntity<?> put(Review review) {
         if (!reviewRepository.existsById(review.getId())) {
-            return ResponseEntity.badRequest().body("reviewId не найден");
+            return ResponseEntity.badRequest().body("review не найден");
         }
-        if (!goodRepository.existsById(review.getGoodsId())) {
-            return ResponseEntity.badRequest().body("goods_id не найден");
-        }
-        if (!userRepository.existsById(review.getUsersId())) {
-            return ResponseEntity.badRequest().body("users_id не найден");
+        ResponseEntity<?> responseEntity = checkParam(review);
+        if (responseEntity != null) {
+            return responseEntity;
         }
         return ResponseEntity.ok(reviewRepository.save(review));
     }

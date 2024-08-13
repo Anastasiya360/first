@@ -10,4 +10,6 @@ import java.util.List;
 
 @Repository
 public interface GoodRepository extends JpaRepository<Good, Integer> {
+    @Query(nativeQuery = true, value = "select unit_price from goods where id = :goodId")
+    Double getUnitPriceGood(Integer goodId);
 }

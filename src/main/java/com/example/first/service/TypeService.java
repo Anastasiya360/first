@@ -34,9 +34,21 @@ public class TypeService {
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity<?> create(Type type) {
-        if (type.getName() == null) {
+    public ResponseEntity<?> checkParam(Type type) {
+        if (type.getName() == null || type.getName().isBlank()) {
             return ResponseEntity.badRequest().body("name не передан");
+        }
+        if (typeRepository.existsByName(type.getName())) {
+            return ResponseEntity.badRequest().body("name уже существует");
+        }
+        return null;
+    }
+
+    public ResponseEntity<?> create(Type type) {
+        type.setId(null);
+        ResponseEntity<?> responseEntity = checkParam(type);
+        if (responseEntity != null) {
+            return responseEntity;
         }
         return ResponseEntity.ok(typeRepository.save(type));
     }
@@ -55,9 +67,13 @@ public class TypeService {
 
     public ResponseEntity<?> put(Type type) {
         if (!typeRepository.existsById(type.getId())) {
-            return ResponseEntity.badRequest().body("typeId не найден");
-        } else {
-            return ResponseEntity.ok(typeRepository.save(type));
+            return ResponseEntity.badRequest().body("type не найден");
         }
+        ResponseEntity<?> responseEntity = checkParam(type);
+        if (responseEntity != null) {
+            return responseEntity;
+        }
+        return ResponseEntity.ok(typeRepository.save(type));
     }
 }
+

@@ -39,13 +39,23 @@ public class OrderService {
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity<?> create(Order order) {
+    public ResponseEntity<?> checkParam(Order order) {
         if (!userRepository.existsById(order.getUserId())) {
-            return ResponseEntity.badRequest().body("users_id не найден");
+            return ResponseEntity.badRequest().body("user не найден");
         }
-        if (order.getStatus() == null) {
-            return ResponseEntity.badRequest().body("status не передан");
+        if (order.getUserId() == null) {
+            return ResponseEntity.badRequest().body("user не передан");
         }
+        return null;
+    }
+    public ResponseEntity<?> create(Order order) {
+        order.setId(null);
+        order.setStatus("basket");
+        ResponseEntity<?> responseEntity = checkParam(order);
+        if (responseEntity != null){
+            return responseEntity;
+        }
+        order.setOrderDate(LocalDate.now());
         return ResponseEntity.ok(orderRepository.save(order));
     }
 
@@ -57,12 +67,24 @@ public class OrderService {
         return ResponseEntity.ok(orderRepository.findById(id));
     }
 
+    public ResponseEntity<?> findOrderByUserId(Integer id) {
+        if (orderRepository.findOrderByUserId(id) == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(orderRepository.findOrderByUserId(id));
+    }
+
+    public ResponseEntity<?> getAll() {
+        return ResponseEntity.ok(orderRepository.findAll());
+    }
+
     public ResponseEntity<?> put(Order order) {
         if (!orderRepository.existsById(order.getId())) {
-            return ResponseEntity.badRequest().body("orderId не найден");
+            return ResponseEntity.badRequest().body("order не найден");
         }
-        if (!userRepository.existsById(order.getUserId())) {
-            return ResponseEntity.badRequest().body("users_id не найден");
+        ResponseEntity<?> responseEntity = checkParam(order);
+        if (responseEntity != null){
+            return responseEntity;
         }
         return ResponseEntity.ok(orderRepository.save(order));
     }

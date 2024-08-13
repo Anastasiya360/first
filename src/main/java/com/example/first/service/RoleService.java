@@ -34,12 +34,24 @@ public class RoleService {
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity<?> create(Role role) {
-        if (role.getName() == null) {
+    public ResponseEntity<?> checkParam(Role role) {
+        if (role.getName() == null || role.getName().isBlank()) {
             return ResponseEntity.badRequest().body("name не передан");
         }
-        if (role.getPermission() == null) {
+        if (roleRepository.existsByName(role.getName())) {
+            return ResponseEntity.badRequest().body("name уже существует");
+        }
+        if (role.getPermission() == null || role.getPermission().isBlank()) {
             return ResponseEntity.badRequest().body("permission не передан");
+        }
+        return null;
+    }
+
+    public ResponseEntity<?> create(Role role) {
+        role.setId(null);
+        ResponseEntity<?> responseEntity = checkParam(role);
+        if (responseEntity != null) {
+            return responseEntity;
         }
         return ResponseEntity.ok(roleRepository.save(role));
     }
@@ -59,8 +71,12 @@ public class RoleService {
     public ResponseEntity<?> put(Role role) {
         if (!roleRepository.existsById(role.getId())) {
             return ResponseEntity.badRequest().body("roleId не найден");
-        } else {
-            return ResponseEntity.ok(roleRepository.save(role));
         }
+        ResponseEntity<?> responseEntity = checkParam(role);
+        if (responseEntity != null) {
+            return responseEntity;
+        }
+        return ResponseEntity.ok(roleRepository.save(role));
     }
 }
+

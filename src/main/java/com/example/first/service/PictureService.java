@@ -37,12 +37,24 @@ public class PictureService {
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity<?> create(Picture picture) {
-        if (!goodRepository.existsById(picture.getGoodsId())) {
-            return ResponseEntity.badRequest().body("goodsId не найден");
+    public ResponseEntity<?> checkParam(Picture picture) {
+        if (picture.getGoodsId() == null) {
+            return ResponseEntity.badRequest().body("good не передан");
         }
-        if (picture.getPicture() == null) {
+        if (picture.getPicture() == null || picture.getPicture().isBlank()) {
             return ResponseEntity.badRequest().body("picture не передан");
+        }
+        if (!goodRepository.existsById(picture.getGoodsId())) {
+            return ResponseEntity.badRequest().body("good не найден");
+        }
+        return null;
+    }
+
+    public ResponseEntity<?> create(Picture picture) {
+        picture.setId(null);
+        ResponseEntity<?> responseEntity = checkParam(picture);
+        if (responseEntity != null) {
+            return responseEntity;
         }
         return ResponseEntity.ok(pictureRepository.save(picture));
     }
@@ -59,12 +71,20 @@ public class PictureService {
         return ResponseEntity.ok(pictureRepository.findAll());
     }
 
-    public ResponseEntity<?> put(Picture picture) {
-        if (!pictureRepository.existsById(picture.getId())) {
-            return ResponseEntity.badRequest().body("pictureId не найден");
+    public ResponseEntity<?> findPictureByGoodId(Integer id) {
+        if (pictureRepository.findPictureByGoodId(id) == null) {
+            return ResponseEntity.notFound().build();
         }
-        if (!goodRepository.existsById(picture.getGoodsId())) {
-            return ResponseEntity.badRequest().body("goodsId не найден");
+        return ResponseEntity.ok(pictureRepository.findPictureByGoodId(id));
+    }
+
+    public ResponseEntity<?> put(Picture picture) {
+        ResponseEntity<?> responseEntity = checkParam(picture);
+        if (responseEntity != null) {
+            return responseEntity;
+        }
+        if (!pictureRepository.existsById(picture.getId())) {
+            return ResponseEntity.badRequest().body("picture не найден");
         }
         return ResponseEntity.ok(pictureRepository.save(picture));
     }

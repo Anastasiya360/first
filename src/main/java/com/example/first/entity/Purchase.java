@@ -1,5 +1,6 @@
 package com.example.first.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,8 +21,9 @@ public class Purchase implements Serializable {
     @Column(name = "amount")
     private Integer amount;
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @Column(name = "price")
-    private double price;
+    private Double price;
 
     @Data
     @AllArgsConstructor

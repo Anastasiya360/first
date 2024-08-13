@@ -1,5 +1,6 @@
 package com.example.first.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -36,6 +37,7 @@ public class User implements Serializable {
     @Column(name = "password")
     private String password;
 
+    @Schema(description = "поле телефон состоит из 11 символов и начинается с 8")
     @Column(name = "phone")
     private String phone;
 }

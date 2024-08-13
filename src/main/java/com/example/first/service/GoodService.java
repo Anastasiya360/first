@@ -28,6 +28,22 @@ public class GoodService {
         return null;
     }
 
+    public ResponseEntity<?> checkParam(Good good) {
+        if (good.getName() == null || good.getName().isBlank()) {
+            return ResponseEntity.badRequest().body("name не передан");
+        }
+        if (good.getGoodsTypeId() == null) {
+            return ResponseEntity.badRequest().body("type не передан");
+        }
+        if (good.getUnitPrice() == null) {
+            return ResponseEntity.badRequest().body("unitPrice не передан");
+        }
+        if (!typeRepository.existsById(good.getGoodsTypeId())) {
+            return ResponseEntity.badRequest().body("type не найден");
+        }
+        return null;
+    }
+
     public ResponseEntity<?> deleteById(Integer id) {
         ResponseEntity<?> responseEntity = existById(id);
         if (responseEntity != null) {
@@ -38,14 +54,10 @@ public class GoodService {
     }
 
     public ResponseEntity<?> create(Good good) {
-        if (good.getName() == null) {
-            return ResponseEntity.badRequest().body("name не передан");
-        }
-        if (!typeRepository.existsById(good.getGoodsTypeId())) {
-            return ResponseEntity.badRequest().body("goodsTypeId не найден");
-        }
-        if (good.getUnitPrice() == null) {
-            return ResponseEntity.badRequest().body("unitPrice не передан");
+        good.setId(null);
+        ResponseEntity<?> responseEntity = checkParam(good);
+        if (responseEntity != null){
+            return responseEntity;
         }
         return ResponseEntity.ok(goodRepository.save(good));
     }
@@ -63,11 +75,12 @@ public class GoodService {
     }
 
     public ResponseEntity<?> put(Good good) {
-        if (!goodRepository.existsById(good.getId())) {
-            return ResponseEntity.badRequest().body("goodId не найден");
+        ResponseEntity<?> responseEntity = checkParam(good);
+        if (responseEntity != null){
+            return responseEntity;
         }
-        if (!typeRepository.existsById(good.getGoodsTypeId())) {
-            return ResponseEntity.badRequest().body("typeId не найден");
+        if (!goodRepository.existsById(good.getId())) {
+            return ResponseEntity.badRequest().body("good не найден");
         }
         return ResponseEntity.ok(goodRepository.save(good));
     }
