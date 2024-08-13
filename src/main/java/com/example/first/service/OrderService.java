@@ -1,16 +1,17 @@
 package com.example.first.service;
 
-import com.example.first.entity.Good;
 import com.example.first.entity.Order;
+import com.example.first.enums.OrderStatus;
 import com.example.first.repository.OrderRepository;
 import com.example.first.repository.UserRepository;
-import org.aspectj.weaver.ResolvedPointcutDefinition;
+import org.apache.commons.lang3.EnumUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrderService {
@@ -46,14 +47,22 @@ public class OrderService {
         if (order.getUserId() == null) {
             return ResponseEntity.badRequest().body("user не передан");
         }
+        if (!EnumUtils.isValidEnum(OrderStatus.class, order.getStatus())) {
+            return ResponseEntity.badRequest().body("Статус заказа задан не верно");
+        }
         return null;
     }
+
     public ResponseEntity<?> create(Order order) {
         order.setId(null);
         order.setStatus("basket");
         ResponseEntity<?> responseEntity = checkParam(order);
-        if (responseEntity != null){
+        if (responseEntity != null) {
             return responseEntity;
+        }
+        Optional<Order> oldBasket = orderRepository.findBasketByUserId(order.getUserId());
+        if (oldBasket.isPresent()) {
+            return ResponseEntity.ok(oldBasket.get());
         }
         order.setOrderDate(LocalDate.now());
         return ResponseEntity.ok(orderRepository.save(order));
@@ -67,15 +76,12 @@ public class OrderService {
         return ResponseEntity.ok(orderRepository.findById(id));
     }
 
-    public ResponseEntity<?> findOrderByUserId(Integer id) {
-        if (orderRepository.findOrderByUserId(id) == null){
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(orderRepository.findOrderByUserId(id));
+    public ResponseEntity<?> findOrdersByUserId(Integer id) {
+        return ResponseEntity.ok(orderRepository.findOrdersByUserId(id));
     }
 
-    public ResponseEntity<?> getAll() {
-        return ResponseEntity.ok(orderRepository.findAll());
+    public ResponseEntity<?> findBasketByUserId(Integer userId) {
+        return ResponseEntity.ok(orderRepository.findBasketByUserId(userId));
     }
 
     public ResponseEntity<?> put(Order order) {
@@ -83,7 +89,7 @@ public class OrderService {
             return ResponseEntity.badRequest().body("order не найден");
         }
         ResponseEntity<?> responseEntity = checkParam(order);
-        if (responseEntity != null){
+        if (responseEntity != null) {
             return responseEntity;
         }
         return ResponseEntity.ok(orderRepository.save(order));

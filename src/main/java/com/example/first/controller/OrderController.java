@@ -1,6 +1,5 @@
 package com.example.first.controller;
 
-import com.example.first.entity.Good;
 import com.example.first.entity.Order;
 import com.example.first.service.OrderService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,12 +37,12 @@ public class OrderController {
 
     @GetMapping(path = "order/get/by/user/{id}")
     public ResponseEntity<?> findOrderByUserId(@PathVariable Integer id) {
-        return orderService.findOrderByUserId(id);
+        return orderService.findOrdersByUserId(id);
     }
 
-    @GetMapping(path = "order/get/all")
-    public ResponseEntity<?> getAll() {
-        return orderService.getAll();
+    @GetMapping(path = "order/basket/user/{userId}")
+    public ResponseEntity<?> findBasketByUserId(@PathVariable Integer userId) {
+        return orderService.findBasketByUserId(userId);
     }
 
     @PutMapping(path = "order/put")

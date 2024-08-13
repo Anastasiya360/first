@@ -1,5 +1,7 @@
 package com.example.first.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -34,6 +36,8 @@ public class User implements Serializable {
     @Column(name = "login")
     private String login;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
     @Column(name = "password")
     private String password;
 
