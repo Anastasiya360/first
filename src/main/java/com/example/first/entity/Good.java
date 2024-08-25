@@ -28,4 +28,5 @@ public class Good implements Serializable {
 
     @Column(name = "description")
     private String description;
+
 }

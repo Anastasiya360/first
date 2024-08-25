@@ -41,10 +41,10 @@ public class UserService {
         if (user.getName() == null || user.getName().isBlank()) {
             return ResponseEntity.badRequest().body("name не передан");
         }
-        if (user.getRoleId() == null) {
+        if (user.getRole() == null || user.getRole().getId() == null) {
             return ResponseEntity.badRequest().body("role не передана");
         }
-        if (!roleRepository.existsById(user.getRoleId())) {
+        if (!roleRepository.existsById(user.getRole().getId())) {
             return ResponseEntity.badRequest().body("role не найдена");
         }
         if (userRepository.existsByLogin(user.getLogin())) {

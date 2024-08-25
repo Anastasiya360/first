@@ -34,7 +34,7 @@ public class RoleService {
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity<?> checkParam(Role role) {
+    private ResponseEntity<?> checkParam(Role role) {
         if (role.getName() == null || role.getName().isBlank()) {
             return ResponseEntity.badRequest().body("name не передан");
         }

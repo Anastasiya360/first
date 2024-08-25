@@ -22,4 +22,5 @@ public class Role implements Serializable {
 
     @Column(name = "permission")
     private String permission;
+
 }
